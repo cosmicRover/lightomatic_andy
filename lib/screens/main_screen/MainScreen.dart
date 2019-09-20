@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:lightomatic_andy/geolocator_functions/GeolocatorFunctions.dart';
 import 'package:lightomatic_andy/platform_functions/PlatformFunctions.dart';
 import 'package:lightomatic_andy/widgets/TextWidgets.dart';
 
@@ -13,6 +17,12 @@ class _MainScreenState extends State<MainScreen> {
   static const platform = const MethodChannel("dev.findjoy/lightomatic_andy");
   String platformDetails = "awaiting";
   String fenceStatus = "awaiting";
+  String latLon = "awaiting";
+  StreamSubscription<Position> positionStream;
+  var geolocator = Geolocator();
+  var options = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+
+  //gotta make the location request first
 
   @override
   void initState() {
@@ -24,8 +34,20 @@ class _MainScreenState extends State<MainScreen> {
       PlatformFunctions().executeAndroidTask(platform).then((value) {
         fenceStatus = value;
       });
+
+      positionStream = geolocator.getPositionStream(options).listen((Position position){
+        print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
+        //latLon = position.latitude.toString() + " " + position.longitude.toString();
+      });
+
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    positionStream.cancel();
+    super.dispose();
   }
 
   @override
@@ -36,7 +58,8 @@ class _MainScreenState extends State<MainScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           MainScreenWidgets().mainScreenTextBox("$platformDetails"),
-          MainScreenWidgets().mainScreenTextBox("$fenceStatus")
+          MainScreenWidgets().mainScreenTextBox("$fenceStatus"),
+          MainScreenWidgets().mainScreenTextBox("$latLon")
         ],
       ),
     );

@@ -1,18 +1,10 @@
 package dev.findjoy.lightomatic_andy
 
 import android.app.PendingIntent
-import android.content.ContentProvider
-import android.content.Context
 import android.content.Intent
-import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
-import android.provider.ContactsContract
-import android.provider.Settings
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 
 import io.flutter.app.FlutterActivity
@@ -32,54 +24,11 @@ class MainActivity: FlutterActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     GeneratedPluginRegistrant.registerWith(this)
-
-//    val permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,
-//            android.Manifest.permission.ACCESS_COARSE_LOCATION
-//            )
-//    ActivityCompat.requestPermissions(this, permissions,0)
-
-    getLocation()
-
     geofencingClient  = LocationServices.getGeofencingClient(this)
     methodCallHandler(CHANNEL);
   }
 
-  override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-
-
-  }
-
-  private fun getLocation(){
-    buildLocationRequest()
-    buildLocationCallBack()
-
-    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-
-
-  }
-
-  private fun buildLocationCallBack(){
-    locationCallback = object : LocationCallback(){
-
-      override fun onLocationResult(p0: LocationResult?) {
-        Log.d("last location ->", "${p0!!.lastLocation}")
-      }
-    }
-  }
-
-  private fun buildLocationRequest(){
-    locationRequest = LocationRequest()
-    locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    locationRequest.interval = 5000
-    locationRequest.fastestInterval = 3000
-    locationRequest.smallestDisplacement = 10f
-  }
-
-  private fun buildGeoFence(){
-
+  private fun buildGeoFenceAndAddToList(){
     geofenceList.add(Geofence.Builder().setRequestId("fence1").setCircularRegion(
             40.83966064453125,
             -73.86280397081097,
@@ -97,8 +46,6 @@ class MainActivity: FlutterActivity() {
       }
     }
   }
-
-
 
   private fun getGeofencingRequest(): GeofencingRequest {
     return GeofencingRequest.Builder().apply {
@@ -128,7 +75,7 @@ class MainActivity: FlutterActivity() {
           }
           call.method == "exeAndroidFence" -> {
             //val platform = getPlatform()
-            buildGeoFence()
+            buildGeoFenceAndAddToList()
             result.success(geofenceList[0].requestId)
           }
           else -> result.notImplemented()
