@@ -22,4 +22,13 @@ class PlatformFunctions{
       return e.toString();
     }
   }
+
+  Future<dynamic> getAndroidLocation(MethodChannel platform)async{
+    try {
+      dynamic result = await platform.invokeMethod('androidLocation');
+      return result.toString();
+    }on PlatformException catch(e){
+      return e.toString();
+    }
+  }
 }
