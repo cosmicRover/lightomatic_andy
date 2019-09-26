@@ -19,72 +19,19 @@ import io.flutter.plugins.GeneratedPluginRegistrant
 class MainActivity: FlutterActivity(){
   private val CHANNEL = "dev.findjoy/lightomatic_andy"
   lateinit var geofencingClient: GeofencingClient
-  lateinit var locationRequest: LocationRequest
-  lateinit var locationCallback: LocationCallback
-  lateinit var fusedLocationProviderClient: FusedLocationProviderClient
   var geofenceList: MutableList<Geofence> = arrayListOf()
-  private lateinit var myLocationListener: MyLocationListener
 
   lateinit var lifeCycleRegistry: LifecycleRegistry
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-//    fusedLocationProviderClient = LocationServices
-//            .getFusedLocationProviderClient(this)
-//
-//    createLocationRequest()
-//
-//    locationCallback = object : LocationCallback() {
-//      override fun onLocationResult(locationResult: LocationResult?) {
-//        locationResult ?: return
-//
-//      }
-//    }
-
     val permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION)
     ActivityCompat.requestPermissions(this, permissions,0)
-
-
-
-//    requestLocationUpdates()
 
     GeneratedPluginRegistrant.registerWith(this)
     geofencingClient  = LocationServices.getGeofencingClient(this)
     methodCallHandler(CHANNEL)
   }
-
-//  override fun getLifecycle(): Lifecycle {
-//    return lifeCycleRegistry
-//  }
-
-//  public override fun onStart() {
-//    super.onStart()
-//
-//    //start(locationRequest, locationCallback)
-//
-//  }
-
-
-  fun start(locationRequest: LocationRequest ,locationCallback: LocationCallback){
-    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-  }
-
-  private fun createLocationRequest() {
-    locationRequest!!.interval = locationRequest.fastestInterval
-    locationRequest!!.fastestInterval = locationRequest.fastestInterval
-    locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-  }
-
-
-  fun requestLocationUpdates() {
-    try {
-      fusedLocationProviderClient!!.requestLocationUpdates(locationRequest,
-              locationCallback!!, Looper.myLooper())
-    } catch (unlikely: SecurityException) {
-      Log.e("ERROR LOC -->>", "$unlikely")
-    }
-  }
-
 
   private fun buildGeoFenceAndAddToList(){
     geofenceList.add(Geofence.Builder().setRequestId("fence1").setCircularRegion(
@@ -134,10 +81,6 @@ class MainActivity: FlutterActivity(){
           call.method == "exeAndroidFence" -> {
             //val platform = getPlatform()
             buildGeoFenceAndAddToList()
-            result.success(geofenceList[0].requestId)
-          }
-
-          call.method == "androidLocation" -> {
             result.success(geofenceList[0].requestId)
           }
 
