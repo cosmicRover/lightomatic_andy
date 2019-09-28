@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_location/flutter_background_location.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:lightomatic_andy/geolocator_functions/GeolocatorFunctions.dart';
 import 'package:lightomatic_andy/platform_functions/PlatformFunctions.dart';
+import 'package:lightomatic_andy/widgets/ButtonWidgets.dart';
 import 'package:lightomatic_andy/widgets/TextWidgets.dart';
 
 class MainScreen extends StatefulWidget {
@@ -19,37 +16,12 @@ class _MainScreenState extends State<MainScreen> {
   String platformDetails = "awaiting";
   String fenceStatus = "awaiting";
   String latLon = "awaiting";
-  // StreamSubscription<Position> positionStream;
-  // var geolocator = Geolocator();
-  // var options = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
-
-  //gotta make the location request first
 
   @override
   void initState() {
-
-    setState(() {
       PlatformFunctions().getPlatform(platform).then((value) {
         platformDetails = value;
       });
-
-      PlatformFunctions().executeAndroidTask(platform).then((value) {
-        fenceStatus = value;
-      });
-
-      // PlatformFunctions().getAndroidLocation(platform).then((value){
-      //   latLon = value;
-      // });
-
-      // positionStream = geolocator.getPositionStream(options).listen((Position position){
-      //   print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
-      //   //latLon = position.latitude.toString() + " " + position.longitude.toString();
-      // });
-
-    });
-
-    loc();
-
     super.initState();
   }
 
@@ -58,12 +30,14 @@ class _MainScreenState extends State<MainScreen> {
     await FlutterBackgroundLocation.getLocationUpdates((location){
       print("LAT -->> ${location.latitude}");
       print("LON -->> ${location.longitude}");
+      setState(() {
+        latLon = "lat: ${location.latitude.toString()} \nlon ${location.longitude.toString()}";
+      });
     });
   }
 
   @override
   void dispose() {
-    // positionStream.cancel();
     super.dispose();
   }
 
@@ -76,7 +50,10 @@ class _MainScreenState extends State<MainScreen> {
         children: <Widget>[
           MainScreenWidgets().mainScreenTextBox("$platformDetails"),
           MainScreenWidgets().mainScreenTextBox("$fenceStatus"),
-          MainScreenWidgets().mainScreenTextBox("$latLon")
+          MainScreenWidgets().mainScreenTextBox("$latLon"),
+          ButtonWidget().flatButton()//idea is to check if location is enabled/disabled on start
+          //then configure the switch based on the output
+          //then there will a be a function to enable/disable location monitoring on request from switch
         ],
       ),
     );

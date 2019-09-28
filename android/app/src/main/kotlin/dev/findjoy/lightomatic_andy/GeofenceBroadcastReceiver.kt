@@ -24,20 +24,12 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         val geofenceTransition = geofencingEvent.geofenceTransition
 
         // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-        geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-
-            // Get the geofences that were triggered. A single event can trigger
-            // multiple geofences.
-            val triggeringGeofences = geofencingEvent.triggeringGeofences
-
-            //sendNotification(this, "hello", 8888)
-
-            Log.i(TAG, geofenceTransition.toString())
-            Log.i(TAG, triggeringGeofences.toString())
-        } else {
-            // Log the error.
-            Log.e(TAG, "ERRRRRRRRROR")
+        when (geofenceTransition) {
+            Geofence.GEOFENCE_TRANSITION_ENTER -> //hit the turn on endpoint
+                Log.i(TAG, geofenceTransition.toString())
+            Geofence.GEOFENCE_TRANSITION_EXIT -> //hit the off endpoint
+                Log.i(TAG, geofenceTransition.toString())
+            else -> Log.i(TAG, "Error on geofence transition")
         }
     }
 }

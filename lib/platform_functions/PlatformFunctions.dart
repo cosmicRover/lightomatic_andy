@@ -23,12 +23,23 @@ class PlatformFunctions{
     }
   }
 
-  Future<dynamic> getAndroidLocation(MethodChannel platform)async{
+  //enabling/diabling location monitoring
+  Future<dynamic> disableMonitor(MethodChannel platform)async{
     try {
-      dynamic result = await platform.invokeMethod('androidLocation');
+      dynamic result = await platform.invokeMethod('androidLocationDisableRequest');
       return result.toString();
     }on PlatformException catch(e){
       return e.toString();
     }
   }
+
+  Future<dynamic> enableMonitor(MethodChannel platform)async{
+    try {
+      dynamic result = await platform.invokeMethod('androidLocationEnableRequest');
+      return result.toString();
+    }on PlatformException catch(e){
+      return e.toString();
+    }
+  }
+
 }
