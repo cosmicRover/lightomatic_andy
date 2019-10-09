@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ButtonWidget{
-  Widget flatButton(bool value, Function onChangeFunc()){
-    return Switch(
-      value: false,
-      activeColor: Colors.green,
-      onChanged: onChangeFunc()
-      //onChanged: onChangeFunc,
+  Widget flatButton(Function onChangeFunc){
+    return FlatButton(child: Text("Press to activate fence"),
+    onPressed: onChangeFunc(),
     );
   }
-
 }

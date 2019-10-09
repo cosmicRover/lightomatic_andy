@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_location/flutter_background_location.dart';
@@ -19,19 +21,25 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-      PlatformFunctions().getPlatform(platform).then((value) {
-        platformDetails = value;
-      });
+    PlatformFunctions().getPlatform(platform).then((value) {
+      platformDetails = value;
+    });
+    loc();
     super.initState();
   }
 
-  void loc() async{
+  void enableFence(){
+    PlatformFunctions().executeAndroidTask(platform);
+  }
+
+  void loc() async {
     await FlutterBackgroundLocation.startLocationService();
-    await FlutterBackgroundLocation.getLocationUpdates((location){
+    await FlutterBackgroundLocation.getLocationUpdates((location) {
       print("LAT -->> ${location.latitude}");
       print("LON -->> ${location.longitude}");
       setState(() {
-        latLon = "lat: ${location.latitude.toString()} \nlon ${location.longitude.toString()}";
+        latLon =
+            "lat: ${location.latitude.toString()} \nlon ${location.longitude.toString()}";
       });
     });
   }
@@ -51,7 +59,13 @@ class _MainScreenState extends State<MainScreen> {
           MainScreenWidgets().mainScreenTextBox("$platformDetails"),
           MainScreenWidgets().mainScreenTextBox("$fenceStatus"),
           MainScreenWidgets().mainScreenTextBox("$latLon"),
-          ButtonWidget().flatButton()//idea is to check if location is enabled/disabled on start
+          FlatButton(
+            child: Text("tap me"),
+            onPressed: (){
+              PlatformFunctions().executeAndroidTask(platform);
+            },
+          )
+          //ButtonWidget().flatButton()//idea is to check if location is enabled/disabled on start
           //then configure the switch based on the output
           //then there will a be a function to enable/disable location monitoring on request from switch
         ],
