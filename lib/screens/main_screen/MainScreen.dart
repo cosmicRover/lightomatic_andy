@@ -24,7 +24,8 @@ class _MainScreenState extends State<MainScreen> {
     PlatformFunctions().getPlatform(platform).then((value) {
       platformDetails = value;
     });
-    loc();
+    loc(); //will add manual control for enabling/diabling loaction
+    //on a seperate page
     super.initState();
   }
 
@@ -60,9 +61,13 @@ class _MainScreenState extends State<MainScreen> {
           MainScreenWidgets().mainScreenTextBox("$fenceStatus"),
           MainScreenWidgets().mainScreenTextBox("$latLon"),
           FlatButton(
-            child: Text("tap me"),
+            //on tap it will remove any existing fences
+            //then it will reinit fence with new coordinates
+            //plan to move it inside another page with forms
+            //for lat + lon
+            child: Text("Enable monitoring"),
             onPressed: (){
-              PlatformFunctions().executeAndroidTask(platform);
+              enableFence();
             },
           )
           //ButtonWidget().flatButton()//idea is to check if location is enabled/disabled on start

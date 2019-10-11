@@ -24,6 +24,7 @@ class MainActivity: FlutterActivity(){
   private val CHANNEL = "dev.findjoy/lightomatic_andy"
   lateinit var geofencingClient: GeofencingClient
   var geofenceList: MutableList<Geofence> = arrayListOf()
+//  val sharedPref = FlutterActivity().getPreferences(Context.MODE_PRIVATE)!!
 
   lateinit var lifeCycleRegistry: LifecycleRegistry
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +71,7 @@ class MainActivity: FlutterActivity(){
 
   private fun getGeofencingRequest(): GeofencingRequest {
     return GeofencingRequest.Builder().apply {
-      setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+      setInitialTrigger(0)
       addGeofences(geofenceList)
     }.build()
   }
@@ -91,9 +92,9 @@ class MainActivity: FlutterActivity(){
             result.success(platform)
           }
           call.method == "exeAndroidFence" -> {
-            //val platform = getPlatform()
             buildGeoFenceAndAddToList()
-            result.success("Fence Active")
+            getGeofencingRequest()
+            result.success("added_fence")
           }
 
           else -> result.notImplemented()
@@ -102,4 +103,9 @@ class MainActivity: FlutterActivity(){
 
   }
 
+  //need a way to save if a particular fence is monitoring or not
+  //shared pref hadn't yielded any positive results.
+  private fun isGeofenceMonitoring(){
+
+  }
 }
